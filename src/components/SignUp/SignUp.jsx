@@ -1,8 +1,9 @@
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import React, { useState } from 'react';
 import auth from '../Firebase/firebase.config';
 import { IoIosEyeOff, IoMdEye } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const SignUp = () => {
     const [signError, setSignError] = useState('')
@@ -38,8 +39,11 @@ const SignUp = () => {
         createUserWithEmailAndPassword(auth, email, password)
             .then(result => {
                 console.log(result.user)
+                sendEmailVerification(auth.currentUser)
+                .then(res => toast.success('check you email for verify'))
+                .catch(err => console.log(err))
                 setIsSuccess('Account Create Successfully')
-                navigate('/login')
+                // navigate('/login')
 
             })
             .catch(err => setSignError(err.message))
@@ -54,7 +58,7 @@ const SignUp = () => {
                     <input className='px-4 py-2 mb-6 w-full border-2' type="email" name='email' placeholder='Your Email' required /><br />
                     <div>
                         <input className='px-4 py-2 mb-6 w-full border-2' type={isShow? "text": "password"} name="password" placeholder='Password' required />
-                        <button className='text-4xl' onClick={() => setIsShow(!isShow)}>
+                        <button type='button' className='text-4xl' onClick={() => setIsShow(!isShow)}>
                             {isShow ? <IoMdEye /> : <IoIosEyeOff />}
                         </button>
                     </div><br />
