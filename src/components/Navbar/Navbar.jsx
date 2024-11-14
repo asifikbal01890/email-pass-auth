@@ -1,26 +1,33 @@
 import { signOut } from 'firebase/auth';
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import auth from '../Firebase/firebase.config';
 import toast from 'react-hot-toast';
+import { Context } from '../Providers/AuthContext';
 
 const Navbar = () => {
+
+    const { user } = useContext(Context)
+
     const navList = <>
         <li>
-        <Link to={'/'}> home</Link>
+            <Link to={'/'}> home</Link>
         </li>
         <li>
-        <Link to={'/login'}> Login</Link>
+            <Link to={'/login'}> Login</Link>
         </li>
         <li>
-        <Link to={'/signUp'}> Sign Up</Link>
+            <Link to={'/signUp'}> Sign Up</Link>
+        </li>
+        <li>
+            <Link to={'/order'}> order</Link>
         </li>
     </>
 
-const handleLogOut =()=>{
-    signOut(auth)
-    .then(result => toast.success('Log out Successfully'))
-}
+    const handleLogOut = () => {
+        signOut(auth)
+            .then(result => toast.success('Log out Successfully'))
+    }
 
     return (
         <div className="navbar bg-base-100">
@@ -43,18 +50,24 @@ const handleLogOut =()=>{
                     <ul
                         tabIndex={0}
                         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
-                       {navList}
+                        {navList}
                     </ul>
                 </div>
                 <a className="btn btn-ghost text-xl">daisyUI</a>
             </div>
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1">
-                   {navList}
+                    {navList}
                 </ul>
             </div>
             <div className="navbar-end">
-                <button onClick={handleLogOut} className="btn">Log out</button>
+                {user ? <>
+                    <h1>{user.email}</h1>
+                    <button onClick={handleLogOut} className="btn">Log out</button>
+                </>:
+                <Link to={'/login'} className="btn">Login</Link>
+                }
+                
             </div>
         </div>
     );
