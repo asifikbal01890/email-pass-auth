@@ -21,10 +21,13 @@ const AuthContext = ({ children }) => {
     }
 
     useEffect(() => {
-        onAuthStateChanged(auth, currentUser => {
+        const unsubscribe = onAuthStateChanged(auth, currentUser => {
             setUser(currentUser)
             setIsLoading(false)
         })
+        return () => {
+            unsubscribe();
+        }
     }, [])
 
     const utilits = { user, register, login, isLoading }
